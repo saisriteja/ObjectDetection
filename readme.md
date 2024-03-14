@@ -22,3 +22,9 @@ Both of them have the ground truth labels for different categories.
 gdown 1-BEq--FcjshTF1UwUabby_LHhYj41os5
 gdown 1PFdW_VFSCfZ_sTSZAGjQdifF_Xd5mf0V
 ```
+
+```python
+python data_pruning/clipNN_pruning.py
+python data_pruning/random_pruning.py
+python data_pruning/SNP_pruning.py
+```
