@@ -53,29 +53,32 @@ def prepare_csv(json_path, img_path):
 
 if __name__ == '__main__':
 
-    # jsons = ['/data/tmp_teja/datacv/data/source_pool/bdd_annotation.json', 
+    jsons = [
+            '/data/tmp_teja/datacv/data/source_pool/coco_annotation.json', 
+            '/data/tmp_teja/datacv/data/source_pool/ade_annotation.json', 
+            '/data/tmp_teja/datacv/data/source_pool/cityscapes_annotation.json', 
+            '/data/tmp_teja/datacv/data/source_pool/voc_annotation.json',
+        # '/data/tmp_teja/datacv/data/source_pool/bdd_annotation.json', 
     #         '/data/tmp_teja/datacv/data/source_pool/detrac_annotation.json',
     #         '/data/tmp_teja/datacv/data/source_pool/kitti_annotation.json', 
-    #         '/data/tmp_teja/datacv/data/source_pool/coco_annotation.json', 
-    #         '/data/tmp_teja/datacv/data/source_pool/ade_annotation.json', 
-    #         '/data/tmp_teja/datacv/data/source_pool/cityscapes_annotation.json', 
-    #         '/data/tmp_teja/datacv/data/source_pool/voc_annotation.json'
-    # ]
+    ]
 
 
-    # imgs_path  = ['/data/tmp_teja/datacv/data/source_pool/bdd_train', 
+    imgs_path  = [
+                '/data/tmp_teja/datacv/data/source_pool/coco_train', 
+                '/data/tmp_teja/datacv/data/source_pool/ade_train', 
+                '/data/tmp_teja/datacv/data/source_pool/cityscapes_train', 
+                '/data/tmp_teja/datacv/data/source_pool/voc_train',
+        #  '/data/tmp_teja/datacv/data/source_pool/bdd_train', 
     #             '/data/tmp_teja/datacv/data/source_pool/detrac_train',
     #             '/data/tmp_teja/datacv/data/source_pool/kitti_train', 
-    #             '/data/tmp_teja/datacv/data/source_pool/coco_train', 
-    #             '/data/tmp_teja/datacv/data/source_pool/ade_train', 
-    #             '/data/tmp_teja/datacv/data/source_pool/cityscapes_train', 
-    #             '/data/tmp_teja/datacv/data/source_pool/voc_train',
-    # ]
+
+    ]
 
 
 
-    jsons = [ '/data/tmp_teja/datacv/data/source_pool/voc_annotation.json']
-    imgs_path  = ['/data/tmp_teja/datacv/data/source_pool/voc_train']
+    # jsons = [ '/data/tmp_teja/datacv/data/source_pool/voc_annotation.json']
+    # imgs_path  = ['/data/tmp_teja/datacv/data/source_pool/voc_train']
 
 
     for json_path, img_path in zip(jsons[::-1], imgs_path[::-1]):
