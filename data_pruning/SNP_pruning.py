@@ -88,7 +88,22 @@ def get_pruned_dataset(csv_paths,
                        total_images,
                        visdrone_img_paths,
                        c_num,
-                       result_dir = 'snp_output'):
+                       result_dir = 'snp_output',
+                       cache_delete = True):
+    
+
+    if cache_delete:
+
+        try:
+            fo.delete_dataset("visdrone")
+            fo.delete_dataset("source_dataset")
+            os.remove("embeddings/visdrone_embeddings.npy")
+            os.remove("embeddings/feature.npy")
+
+        except Exception as e:
+            logger.error(e)
+            pass
+
     
     os.makedirs(result_dir, exist_ok=True)
 

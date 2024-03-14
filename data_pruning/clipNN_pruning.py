@@ -10,8 +10,23 @@ def get_pruned_dataset(csv_paths,
                        total_images,
                        visdrone_img_paths,
                        n_neighbors= 5,
-                       result_dir = 'clipNN_output'):
-    
+                       result_dir = 'clipNN_output',
+                       cache_delete = True):
+
+    if cache_delete:
+
+        try:
+            fo.delete_dataset("visdrone")
+            fo.delete_dataset("source_dataset")
+            os.remove("embeddings/visdrone_embeddings.npy")
+            os.remove("embeddings/feature.npy")
+            os.remove("embeddings/umap_embs.npy")
+
+        except Exception as e:
+            logger.error(e)
+            pass
+
+
     os.makedirs(result_dir, exist_ok=True)
 
 
@@ -198,13 +213,20 @@ if __name__ == '__main__':
     ]
 
 
+    # visdrone images
     from glob import glob
     visdrone_paths = '/data/tmp_teja/datacv/final/visdrone/VisDrone2019-VID-train/sequences/*/*'
     visdrone_img_paths = glob(visdrone_paths)
     visdrone_img_paths.sort()
 
+
+    # total image to be pruned to from the source
     total_images = 10
-    nearest_neighbours = 50
+
+    # increase the nearest neighbours to get the best results for the pruned dataset
+    nearest_neighbours = 100
+    
+    # get the pruned dataset
     get_pruned_dataset(csv_paths, total_images,
                           visdrone_img_paths,n_neighbors = nearest_neighbours)
 

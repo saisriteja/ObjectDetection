@@ -36,4 +36,6 @@ if __name__ == '__main__':
 
     output_path = 'csv_info/random_pruned_data.csv'
     total_images = 5000
+
+    # random pruning of the dataset
     get_pruned_dataset(csv_paths, output_path, total_images)
