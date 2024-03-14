@@ -312,9 +312,10 @@ if __name__ == '__main__':
     visdrone_img_paths = glob(visdrone_paths)
     visdrone_img_paths.sort()
 
+
+    # no of clusters
     c_num = len(glob('/data/tmp_teja/datacv/final/visdrone/VisDrone2019-VID-train/sequences/*'))
-    
-    c_num = 5
+
 
     output_path = 'csv_info/random_pruned_data.csv'
     total_images = 5000
