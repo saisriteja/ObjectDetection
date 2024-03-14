@@ -122,7 +122,7 @@ def get_pruned_dataset(csv_paths,
     os.makedirs("embeddings", exist_ok=True)
 
     if not os.path.exists(embeddings_path):
-        visdrone_51 = visdrone_51.limit(100)
+        # visdrone_51 = visdrone_51.limit(100)
         # compute the inception embeddings
         model = foz.load_zoo_model("inception-v3-imagenet-torch")
         target_feature = visdrone_51.compute_embeddings(model)
@@ -157,7 +157,7 @@ def get_pruned_dataset(csv_paths,
     feature_path = "embeddings/feature.npy"
     if not os.path.exists(feature_path):
 
-        source_dataset = source_dataset.limit(100)
+        # source_dataset = source_dataset.limit(100)
 
         # compute the embeddings
         model = foz.load_zoo_model("inception-v3-imagenet-torch")
