@@ -176,7 +176,7 @@ def get_pruned_dataset(csv_paths,
     median_label_ratio = norm_label_ratio.median()
 
     # if any value is greater than the median, assign it to the median
-    norm_label_ratio[norm_label_ratio > median_label_ratio] = median_label_ratio
+    # norm_label_ratio[norm_label_ratio > median_label_ratio] = median_label_ratio
 
     # multiply the label ratio with the total images to get the number of images per label
     label_ratio = (norm_label_ratio * total_images).astype(int)
@@ -190,23 +190,23 @@ def get_pruned_dataset(csv_paths,
     # assign the remaining images to the label from each label with the og ratio
     # if label_ratio.sum() < total_images:
 
-    status = label_ratio.sum() < total_images
+    # status = label_ratio.sum() < total_images
 
 
-    print(norm_label_ratio)
+    # print(norm_label_ratio)
 
-    while status:
-        for label, count in norm_label_ratio.items():
-            # use normal ratio to get the count
-            count = int(count * total_images)
-            label_ratio[label] += count
+    # while status:
+    #     for label, count in norm_label_ratio.items():
+    #         # use normal ratio to get the count
+    #         count = int(count * total_images)
+    #         label_ratio[label] += count
 
-            status = label_ratio.sum() < total_images
+    #         status = label_ratio.sum() < total_images
 
-            if not status:
-                break
+    #         if not status:
+    #             break
 
-        print(label_ratio.sum())
+    #     print(label_ratio.sum())
 
 
 
