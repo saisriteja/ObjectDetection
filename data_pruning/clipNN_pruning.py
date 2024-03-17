@@ -11,13 +11,14 @@ def get_pruned_dataset(csv_paths,
                        visdrone_img_paths,
                        n_neighbors= 5,
                        result_dir = 'clipNN_output',
-                       cache_delete = True):
+                       cache_delete = False):
 
     if cache_delete:
 
         try:
             fo.delete_dataset("visdrone")
             fo.delete_dataset("source_dataset")
+
             os.remove("embeddings/visdrone_embeddings.npy")
             os.remove("embeddings/feature.npy")
             os.remove("embeddings/umap_embs.npy")
@@ -28,7 +29,6 @@ def get_pruned_dataset(csv_paths,
 
 
     os.makedirs(result_dir, exist_ok=True)
-
 
     all_data = []
 
@@ -113,7 +113,6 @@ def get_pruned_dataset(csv_paths,
     umap_embs_path = "embeddings/umap_embs.npy"
 
     if not os.path.exists(umap_embs_path):
-        import umap
         embs = fob.compute_visualization(
                                             dataset,
                                             embeddings=all_embds,
@@ -128,6 +127,8 @@ def get_pruned_dataset(csv_paths,
     else:
         embs = np.load(umap_embs_path)
 
+
+    print(embs)
     
     source_embs = embs[:len(feature_infer)]
     target_embs = embs[len(feature_infer):]
@@ -136,9 +137,15 @@ def get_pruned_dataset(csv_paths,
 
     # get the nearest neighbours
     from sklearn.neighbors import NearestNeighbors
+
+    print("total nearest neighbours")
+    print(n_neighbors)
     neigh = NearestNeighbors(n_neighbors=n_neighbors)
 
     model = neigh.fit(source_embs)
+
+
+    logger.info("generating the nearest neighbours")
 
     # get all the nearest neighbours from the source to the target
     distances, indices = model.kneighbors(target_embs)
@@ -160,20 +167,51 @@ def get_pruned_dataset(csv_paths,
     data['label'] = data['img_path'].apply(lambda x: x.split('/')[-2])
 
     # get the ratio of labels in the total dataset
-    label_ratio = data['label'].value_counts(normalize=True)
+    norm_label_ratio = data['label'].value_counts(normalize=True)
+
+    logger.info("Before pruning")
+    print(norm_label_ratio)
 
     # get the median of the label ratio
-    median_label_ratio = label_ratio.median()
+    median_label_ratio = norm_label_ratio.median()
 
     # if any value is greater than the median, assign it to the median
-    label_ratio[label_ratio > median_label_ratio] = median_label_ratio
+    norm_label_ratio[norm_label_ratio > median_label_ratio] = median_label_ratio
 
     # multiply the label ratio with the total images to get the number of images per label
-    label_ratio = (label_ratio * total_images).astype(int)
+    label_ratio = (norm_label_ratio * total_images).astype(int)
 
     # if the sum of the label ratio is less than the total images, assign the remaining images to the label with the highest count
-    if label_ratio.sum() < total_images:
-        label_ratio[label_ratio.idxmax()] += (total_images - label_ratio.sum())
+    # if label_ratio.sum() < total_images:
+    #     label_ratio[label_ratio.idxmax()] += (total_images - label_ratio.sum())
+
+
+    # if the sum of the label ratio is lesser than the total images, 
+    # assign the remaining images to the label from each label with the og ratio
+    # if label_ratio.sum() < total_images:
+
+    status = label_ratio.sum() < total_images
+
+
+    print(norm_label_ratio)
+
+    while status:
+        for label, count in norm_label_ratio.items():
+            # use normal ratio to get the count
+            count = int(count * total_images)
+            label_ratio[label] += count
+
+            status = label_ratio.sum() < total_images
+
+            if not status:
+                break
+
+        print(label_ratio.sum())
+
+
+
+    logger.info("After pruning")
+    print(label_ratio)
 
     # print(label_ratio)
     img_names = []
@@ -185,8 +223,10 @@ def get_pruned_dataset(csv_paths,
         count = min(count, len(df_unq))
         img_names.extend(df_unq[:count])
 
-    
 
+    # limiting to 5000 images
+    img_names = img_names[:total_images]
+    
     # =====================================================> Saving the CSV file <================================================
 
     final_df = data[data['img_path'].isin(img_names)]
@@ -209,19 +249,22 @@ if __name__ == '__main__':
         'csv_info/coco_annotation.csv',
         'csv_info/ade_annotation.csv',
         'csv_info/cityscapes_annotation.csv',
-        'csv_info/voc_annotation.csv'
+        'csv_info/voc_annotation.csv',
+        'csv_info/bdd_annotation.csv',
+        'csv_info/detrac_annotation.csv',
+        'csv_info/kitti_annotation.csv',
     ]
 
 
     # visdrone images
     from glob import glob
-    visdrone_paths = '/data/tmp_teja/datacv/final/visdrone/VisDrone2019-VID-train/sequences/*/*'
+    visdrone_paths = '/data/tmp_teja/datacv/final/ObjectDetection/visdrone/VisDrone2019-DET-train/images/*'
     visdrone_img_paths = glob(visdrone_paths)
     visdrone_img_paths.sort()
 
 
     # total image to be pruned to from the source
-    total_images = 10
+    total_images = 5000
 
     # increase the nearest neighbours to get the best results for the pruned dataset
     nearest_neighbours = 100
